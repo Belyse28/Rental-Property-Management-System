@@ -1,0 +1,391 @@
+# 🏗️ System Architecture
+
+## Application Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         USER                                 │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    LOGIN PAGE                                │
+│  - Username Input                                            │
+│  - Password Input                                            │
+│  - Authentication                                            │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+                  ┌──────┴──────┐
+                  │             │
+         ┌────────▼────┐   ┌────▼────────┐
+         │    ADMIN    │   │  LANDLORD   │
+         │   (Full)    │   │ (Limited)   │
+         └────────┬────┘   └────┬────────┘
+                  │             │
+                  └──────┬──────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      DASHBOARD                               │
+│  - Statistics Cards                                          │
+│  - Navigation Buttons (Role-Based)                           │
+│  - User Info & Logout                                        │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+         ┌───────────────┼───────────────┐
+         │               │               │
+         ▼               ▼               ▼
+┌────────────┐  ┌────────────┐  ┌────────────┐
+│ PROPERTIES │  │  TENANTS   │  │  PAYMENTS  │
+│    CRUD    │  │    CRUD    │  │    CRUD    │
+└────────────┘  └────────────┘  └────────────┘
+```
+
+---
+
+## Component Architecture
+
+```
+App.vue (Root)
+│
+├── Login.vue
+│   └── Handles authentication
+│
+├── Dashboard.vue
+│   ├── Shows statistics
+│   ├── Role-based navigation
+│   │
+│   └── Dynamic Component Loading:
+│       ├── PropertyManagement.vue
+│       ├── TenantManagement.vue
+│       └── PaymentManagement.vue
+│
+└── AlertDialog.vue (Global)
+    └── Shows notifications
+```
+
+---
+
+## Data Flow
+
+```
+┌──────────────┐
+│  User Action │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│  Component   │ (Vue Component)
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│    Store     │ (State Management)
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│  Validators  │ (Business + Technical Rules)
+└──────┬───────┘
+       │
+       ├─── Valid ───┐
+       │             ▼
+       │      ┌──────────────┐
+       │      │ Update State │
+       │      └──────┬───────┘
+       │             │
+       │             ▼
+       │      ┌──────────────┐
+       │      │ Success Alert│
+       │      └──────────────┘
+       │
+       └─── Invalid ─┐
+                     ▼
+              ┌──────────────┐
+              │  Error Alert │
+              └──────────────┘
+```
+
+---
+
+## State Management Structure
+
+```javascript
+store = {
+  state: {
+    currentUser: null,
+    users: [],
+    properties: [],
+    tenants: [],
+    payments: []
+  },
+  
+  validators: {
+    // Technical Rules
+    validateEmail(),
+    validateContact(),
+    validateRequired(),
+    validateUniqueUsername(),
+    validateDate(),
+    
+    // Business Rules
+    validatePropertyOwner(),
+    validateTenantAssignment(),
+    validatePaymentAmount(),
+    validateLandlordAccess(),
+    updatePropertyStatus()
+  },
+  
+  methods: {
+    // Auth
+    login(),
+    logout(),
+    
+    // Property CRUD
+    getProperties(),
+    addProperty(),
+    updateProperty(),
+    deleteProperty(),
+    
+    // Tenant CRUD
+    getTenants(),
+    addTenant(),
+    updateTenant(),
+    deleteTenant(),
+    
+    // Payment CRUD
+    getPayments(),
+    addPayment(),
+    updatePayment(),
+    deletePayment()
+  }
+}
+```
+
+---
+
+## Role-Based Access Control
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    USER LOGIN                            │
+└────────────────────┬────────────────────────────────────┘
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+    ┌─────▼─────┐         ┌─────▼─────┐
+    │   ADMIN   │         │ LANDLORD  │
+    └─────┬─────┘         └─────┬─────┘
+          │                     │
+          │                     │
+    ┌─────▼─────────────────────▼─────┐
+    │         DATA ACCESS               │
+    └─────┬─────────────────────┬─────┘
+          │                     │
+    ┌─────▼─────┐         ┌─────▼─────┐
+    │ ALL DATA  │         │ OWN DATA  │
+    │ No Filter │         │ Filtered  │
+    └───────────┘         └───────────┘
+```
+
+---
+
+## Validation Flow
+
+```
+User Input
+    │
+    ▼
+┌─────────────────┐
+│ Form Validation │ (HTML5 + Vue)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Technical Rules │
+│ - Email format  │
+│ - Contact format│
+│ - Required      │
+│ - Date format   │
+│ - Unique check  │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Business Rules  │
+│ - Owner check   │
+│ - Occupied check│
+│ - Amount check  │
+│ - Access check  │
+│ - Status update │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    │         │
+Pass│         │Fail
+    │         │
+    ▼         ▼
+┌────────┐ ┌────────┐
+│Success │ │ Error  │
+│ Alert  │ │ Alert  │
+└────────┘ └────────┘
+```
+
+---
+
+## CRUD Operation Flow
+
+```
+┌──────────────┐
+│  User Click  │
+│  "Add/Edit"  │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│  Show Modal  │
+│     Form     │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│  User Fills  │
+│     Data     │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│   Submit     │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│  Validation  │
+└──────┬───────┘
+       │
+       ├─── Pass ───┐
+       │            ▼
+       │     ┌──────────────┐
+       │     │ Store Update │
+       │     └──────┬───────┘
+       │            │
+       │            ▼
+       │     ┌──────────────┐
+       │     │ Close Modal  │
+       │     └──────┬───────┘
+       │            │
+       │            ▼
+       │     ┌──────────────┐
+       │     │Success Alert │
+       │     └──────┬───────┘
+       │            │
+       │            ▼
+       │     ┌──────────────┐
+       │     │ Refresh List │
+       │     └──────────────┘
+       │
+       └─── Fail ───┐
+                    ▼
+             ┌──────────────┐
+             │  Error Alert │
+             └──────────────┘
+```
+
+---
+
+## File Structure & Responsibilities
+
+```
+src/
+│
+├── main.js
+│   └── Bootstrap Vue application
+│
+├── App.vue
+│   ├── Root component
+│   ├── Manage login state
+│   └── Handle global alerts
+│
+├── components/
+│   └── AlertDialog.vue
+│       └── Display notifications
+│
+├── views/
+│   ├── Login.vue
+│   │   └── User authentication
+│   │
+│   ├── Dashboard.vue
+│   │   ├── Display statistics
+│   │   ├── Role-based navigation
+│   │   └── Load management components
+│   │
+│   ├── PropertyManagement.vue
+│   │   └── Property CRUD operations
+│   │
+│   ├── TenantManagement.vue
+│   │   └── Tenant CRUD operations
+│   │
+│   └── PaymentManagement.vue
+│       └── Payment CRUD operations
+│
+└── store/
+    └── index.js
+        ├── State management
+        ├── Validation rules
+        └── CRUD methods
+```
+
+---
+
+## Technology Stack
+
+```
+┌─────────────────────────────────────┐
+│         Vue.js 3                    │
+│    (Composition API)                │
+└────────────┬────────────────────────┘
+             │
+    ┌────────┴────────┐
+    │                 │
+┌───▼────┐      ┌─────▼─────┐
+│  Vite  │      │ Reactive  │
+│ (Build)│      │   Store   │
+└────────┘      └───────────┘
+```
+
+---
+
+## Security Layers
+
+```
+┌─────────────────────────────────────┐
+│     Layer 1: Authentication         │
+│     (Login Required)                │
+└────────────┬────────────────────────┘
+             │
+┌────────────▼────────────────────────┐
+│     Layer 2: Authorization          │
+│     (Role-Based Access)             │
+└────────────┬────────────────────────┘
+             │
+┌────────────▼────────────────────────┐
+│     Layer 3: Data Filtering         │
+│     (Owner-Based)                   │
+└────────────┬────────────────────────┘
+             │
+┌────────────▼────────────────────────┐
+│     Layer 4: Validation             │
+│     (Business + Technical)          │
+└─────────────────────────────────────┘
+```
+
+---
+
+This architecture ensures:
+✅ Clean separation of concerns
+✅ Reusable components
+✅ Centralized state management
+✅ Comprehensive validation
+✅ Role-based security
+✅ Maintainable codebase
