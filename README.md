@@ -85,99 +85,6 @@ A complete Vue.js-based property rental management system with role-based access
 - Success/Error/Warning notifications
 - Responsive tables
 
-## ✨ Design Features
-- **WCAG 3.0 Compliant** - Accessible to all users
-- **Professional UI** - Modern sidebar navigation with collapsible menu
-- **Comprehensive Dashboard** - Statistics cards, recent activity, quick actions
-- **Intuitive Navigation** - Easy back-to-dashboard from any view
-- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
-- **Human-Centered** - Focus on usability and user experience
-- **Color-Coded** - Visual hierarchy with semantic colors
-- **Keyboard Accessible** - Full keyboard navigation support
-
-📖 **[View Complete UI/UX Design Documentation](UI_UX_DESIGN.md)**
-
-## 🚀 Installation & Setup
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-
-### Installation Steps
-
-1. **Navigate to project directory**
-```bash
-cd Rental-Property-Management-System
-```
-
-2. **Install dependencies**
-```bash
-npm install
-```
-
-3. **Run development server**
-```bash
-npm run dev
-```
-
-4. **Open browser**
-Navigate to `http://localhost:5173`
-
-## 🔑 Demo Accounts
-
-### Admin Account
-- **Username:** admin
-- **Password:** admin123
-- **Access:** Full system access
-
-### Landlord Accounts
-- **Username:** landlord1
-- **Password:** land123
-- **Access:** Own properties only
-
-- **Username:** landlord2
-- **Password:** land123
-- **Access:** Own properties only
-
-### Tenant Account
-- **Username:** tenant1
-- **Password:** tenant123
-- **Access:** View properties and create booking requests
-
-**Note:** Tenants can also register new accounts through the registration form.
-
-## 📁 Project Structure
-
-```
-Rental-Property-Management-System/
-├── src/
-│   ├── components/
-│   │   └── AlertDialog.vue       # Notification component
-│   ├── views/
-│   │   ├── Login.vue             # Login & Registration page
-│   │   ├── Dashboard.vue         # Main dashboard
-│   │   ├── PropertyManagement.vue
-│   │   ├── TenantManagement.vue
-│   │   ├── PaymentManagement.vue
-│   │   ├── BookingManagement.vue # NEW: Booking requests
-│   │   ├── TenantView.vue        # NEW: Tenant property browsing
-│   │   └── UserManagement.vue
-│   ├── stores/               # NEW: Pinia stores
-│   │   ├── auth.js              # Authentication store
-│   │   ├── property.js          # Property & booking store
-│   │   ├── tenant.js            # Tenant store
-│   │   └── payment.js           # Payment store
-│   ├── router/               # NEW: Vue Router
-│   │   └── index.js             # Route configuration
-│   ├── App.vue               # Root component
-│   └── main.js               # Entry point
-├── index.html
-├── package.json
-├── vite.config.js
-├── README.md
-├── SECURITY.md           # NEW: Security documentation
-└── GIT_WORKFLOW.md       # NEW: Git workflow guide
-```
 
 ## 🎯 Usage Guide
 
@@ -262,26 +169,11 @@ All modules support complete CRUD:
 ## 🚦 Validation Messages
 
 The system provides clear feedback:
-- ✅ Success: "Property added successfully"
-- ❌ Error: "Email must follow a valid format"
-- ⚠️ Warning: "Field cannot be empty"
-- ℹ️ Info: "Logged out successfully"
+-  Success: "Property added successfully"
+-  Error: "Email must follow a valid format"
+-  Warning: "Field cannot be empty"
+-  Info: "Logged out successfully"
 
-## 📄 License
-
-This project is created for educational purposes.
-
-## 👨‍💻 Development
-
-To build for production:
-```bash
-npm run build
-```
-
-To preview production build:
-```bash
-npm run preview
-```
 
 ---
 
